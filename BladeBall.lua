@@ -33,7 +33,7 @@ local Window = Rayfield:CreateWindow({
    }
 })
 
-local AutoParry = Window:CreateTab("Auto Parry", 13014537525)
+local AutoParry = Window:CreateTab("Main", 13014537525)
 
 local function startAutoParry()
     local player = game.Players.LocalPlayer
@@ -136,34 +136,65 @@ local AutoParryToggle = AutoParry:CreateToggle({
     end,
 })
 
-local Skill = Window:CreateTab("Unlock SKills", 13014537525)
+local Skill = Window:CreateTab("Skills", 13014537525)
 
 local localPlayer = game.Players.LocalPlayer
 local character = localPlayer.Character or localPlayer.CharacterAdded:Wait()
 local abilitiesFolder = character:WaitForChild("Abilities")
-local ChosenAbility = "Raging Deflection"
 
-local abilities = {
-    "Dash",
-    "Forcefield",
-    "Invisibility",
-    "Platform",
-    "Raging Deflection",
-    "Shadow Step",
-    "Super Jump",
-    "Telekinesis",
-    "Thunder Dash"
-}
-
-for _, ability in ipairs(abilities) do
     Skill:CreateButton({
-        Name = ability,
+        Name = "Dash",
         Callback = function()
-            ChosenAbility = ability
-            print("Habilidade escolhida: " .. ability)
+        ChosenAbility = "Dash"
         end
     })
-end
+
+    Skill:CreateButton({
+        Name = "Forcefield",
+        Callback = function()
+        ChosenAbility = "Forcefield"
+        end
+    })
+
+    Skill:CreateButton({
+        Name = "Invisibility",
+        Callback = function()
+        ChosenAbility = "Invisibility"
+        end
+    })
+
+    Skill:CreateButton({
+        Name = "Platform",
+        Callback = function()
+        ChosenAbility = "Platform"
+        end
+    })
+
+    Skill:CreateButton({
+        Name = "Raging Deflection",
+        Callback = function()
+        ChosenAbility = "Raging Deflection"
+        end
+    })
+    Skill:CreateButton({
+        Name = "Super Jump",
+        Callback = function()
+        ChosenAbility = "Super Jump"
+        end
+    })
+    Skill:CreateButton({
+        Name = "Telekinesis",
+        Callback = function()
+        ChosenAbility = "Telekinesis"
+        end
+    })
+    Skill:CreateButton({
+        Name = "Thunder Dash",
+        Callback = function()
+        ChosenAbility = "Thunder Dash"
+        end
+    })
+
 
 local function onCharacterAdded(newCharacter)
     character = newCharacter
@@ -172,14 +203,40 @@ end
 
 localPlayer.CharacterAdded:Connect(onCharacterAdded)
 
-while task.wait() do
-    for _, obj in pairs(abilitiesFolder:GetChildren()) do
-        if obj:IsA("LocalScript") then
-            if obj.Name == ChosenAbility then
-                obj.Disabled = false
-            else
-                obj.Disabled = true
+local function AbilityUpdater()
+    while true do
+        if abilitiesFolder then
+            for _, obj in pairs(abilitiesFolder:GetChildren()) do
+                if obj:IsA("LocalScript") then
+                    if obj.Name == ChosenAbility then
+                        obj.Disabled = false
+                    else
+                        obj.Disabled = true
+                    end
+                end
+            end
+        end
+        task.wait()
+    end
+end
+
+spawn(AbilityUpdater)
+
+AutoParry:CreateToggle({
+    Name = "Skill No CoolDown",
+    CurrentValue = false, 
+    Flag = "Toggle2",
+    Callback = function(value)
+        xx = value
+    end
+})
+
+while task.wait(1) do
+    if xx then
+        for _, obj in pairs(abilitiesFolder:GetChildren()) do
+            if obj:IsA("LocalScript") then
+                obj.Disabled = not obj.Disabled
             end
         end
     end
-end
+end 
