@@ -150,9 +150,37 @@ local abilitiesFolder = character:WaitForChild("Abilities")
     })
 
     Skill:CreateButton({
-        Name = "Forcefield",
+        Name = "Rapture",
         Callback = function()
-        ChosenAbility = "Forcefield"
+        ChosenAbility = "Rapture"
+        end
+    })
+
+    Skill:CreateButton({
+        Name = "Pull",
+        Callback = function()
+        ChosenAbility = "Pull"
+        end
+    })
+
+    Skill:CreateButton({
+        Name = "Phase Bypass",
+        Callback = function()
+        ChosenAbility = "Phase Bypass"
+        end
+    })
+
+    Skill:CreateButton({
+        Name = "Shadow Step",
+        Callback = function()
+        ChosenAbility = "Shadow Step"
+        end
+    })
+
+    Skill:CreateButton({
+        Name = "Wind Cloak",
+        Callback = function()
+        ChosenAbility = "Wind Cloak"
         end
     })
 
