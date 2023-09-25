@@ -8,8 +8,8 @@ local replicatedStorage = game:GetService("ReplicatedStorage")
 local heartbeatConnection
 
 local Window = Rayfield:CreateWindow({
-   Name = "Blade Ball",
-   LoadingTitle = "Universe CARALHO",
+   Name = "Blade Ball Universe Hub",
+   LoadingTitle = "Universe Hub",
    LoadingSubtitle = "Leossin Xernous Gay",
    ConfigurationSaving = {
       Enabled = false,
@@ -136,6 +136,119 @@ local AutoParryToggle = AutoParry:CreateToggle({
     end,
 })
 
+local Debug = false
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
+
+local Player = Players.LocalPlayer or Players.PlayerAdded:Wait()
+local Remotes = ReplicatedStorage:WaitForChild("Remotes", 9e9)
+local Balls = workspace:WaitForChild("Balls", 9e9)
+
+local isAutoParryEnabled = false
+
+local function print(...)
+    if Debug then
+        warn(...)
+    end
+end
+
+local function VerifyBall(Ball)
+    if typeof(Ball) == "Instance" and Ball:IsA("BasePart") and Ball:IsDescendantOf(Balls) and Ball:GetAttribute("realBall") == true then
+        return true
+    end
+end
+
+local function IsTarget()
+    return (Player.Character and Player.Character:FindFirstChild("Highlight"))
+end
+
+local function Parry()
+    if isAutoParryEnabled then
+        Remotes:WaitForChild("ParryButtonPress"):Fire()
+    end
+end
+
+Balls.ChildAdded:Connect(function(Ball)
+    if not VerifyBall(Ball) then
+        return
+    end
+
+    print(`Ball Spawned: {Ball}`)
+
+    local OldPosition = Ball.Position
+    local OldTick = tick()
+
+    Ball:GetPropertyChangedSignal("Position"):Connect(function()
+        if IsTarget() then
+            local Distance = (Ball.Position - workspace.CurrentCamera.Focus.Position).Magnitude 
+            local Velocity = (OldPosition - Ball.Position).Magnitude
+
+            print(`Distance: {Distance}\nVelocity: {Velocity}\nTime: {Distance / Velocity}`)
+
+            if (Distance / Velocity) <= 10 then
+                Parry()
+            end
+        end
+
+        if (tick() - OldTick >= 1/60) then
+            OldTick = tick()
+            OldPosition = Ball.Position
+        end
+    end)
+end)
+
+AutoParry:CreateToggle({
+    Name = "Auto Parry 2",
+    CurrentValue = false, 
+    Flag = "Toggle2",
+    Callback = function(value)
+        isAutoParryEnabled = value
+    end
+})
+
+
+getgenv().god = false
+
+local function ToggleGod(value)
+    getgenv().god = value
+    if value then
+        while getgenv().god and task.wait() do
+            for _,ball in next, workspace.Balls:GetChildren() do
+                if ball then
+                    if game:GetService("Players").LocalPlayer.Character and game:GetService("Players").LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                        game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position, ball.Position)
+                        if game:GetService("Players").LocalPlayer.Character:FindFirstChild("Highlight") then
+                            game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = ball.CFrame * CFrame.new(10, -10, (ball.Velocity).Magnitude * -0.140)
+                            game:GetService("ReplicatedStorage").Remotes.ParryButtonPress:Fire()
+                        end
+                    end
+                end
+            end
+        end
+    end
+end
+
+AutoParry:CreateToggle({
+    Name = "Rage Auto Parry",
+    CurrentValue = false, 
+    Flag = "Toggle223",
+    Callback = ToggleGod
+})
+
+while getgenv().god and task.wait() do
+    for _,ball in next, workspace.Balls:GetChildren() do
+        if ball then
+            if game:GetService("Players").LocalPlayer.Character and game:GetService("Players").LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position, ball.Position)
+                if game:GetService("Players").LocalPlayer.Character:FindFirstChild("Highlight") then
+                    game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = ball.CFrame * CFrame.new(10, -10, (ball.Velocity).Magnitude * -0.140)
+                    game:GetService("ReplicatedStorage").Remotes.ParryButtonPress:Fire()
+                end
+            end
+        end
+    end
+end
+
 local Skill = Window:CreateTab("Skills", 13014537525)
 
 local localPlayer = game.Players.LocalPlayer
@@ -223,6 +336,20 @@ local abilitiesFolder = character:WaitForChild("Abilities")
         end
     })
 
+    Skill:CreateButton({
+        Name = "Waypoint",
+        Callback = function()
+        ChosenAbility = "Waypoint"
+        end
+    })
+
+    Skill:CreateButton({
+        Name = "Infinity",
+        Callback = function()
+        ChosenAbility = "Infinity"
+        end
+    })
+
 
 local function onCharacterAdded(newCharacter)
     character = newCharacter
@@ -259,7 +386,7 @@ AutoParry:CreateToggle({
     end
 })
 
-while task.wait(1) do
+while task.wait(2) do
     if xx then
         for _, obj in pairs(abilitiesFolder:GetChildren()) do
             if obj:IsA("LocalScript") then
