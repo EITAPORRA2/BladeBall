@@ -173,7 +173,7 @@ Balls.ChildAdded:Connect(function(Ball)
         return
     end
 
-    print(`Ball Spawned: {Ball}`)
+    print("Ball Spawned: {Ball}")
 
     local OldPosition = Ball.Position
     local OldTick = tick()
@@ -183,7 +183,7 @@ Balls.ChildAdded:Connect(function(Ball)
             local Distance = (Ball.Position - workspace.CurrentCamera.Focus.Position).Magnitude 
             local Velocity = (OldPosition - Ball.Position).Magnitude
 
-            print(`Distance: {Distance}\nVelocity: {Velocity}\nTime: {Distance / Velocity}`)
+            print("Distance: {Distance}\nVelocity: {Velocity}\nTime: {Distance / Velocity}")
 
             if (Distance / Velocity) <= 10 then
                 Parry()
@@ -206,7 +206,6 @@ AutoParry:CreateToggle({
     end
 })
 
-
 getgenv().god = false
 
 local function ToggleGod(value)
@@ -218,7 +217,7 @@ local function ToggleGod(value)
                     if game:GetService("Players").LocalPlayer.Character and game:GetService("Players").LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
                         game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position, ball.Position)
                         if game:GetService("Players").LocalPlayer.Character:FindFirstChild("Highlight") then
-                            game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = ball.CFrame * CFrame.new(10, -10, (ball.Velocity).Magnitude * -0.140)
+                            game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = ball.CFrame * CFrame.new(0, -8, (ball.Velocity).Magnitude * -0.140)
                             game:GetService("ReplicatedStorage").Remotes.ParryButtonPress:Fire()
                         end
                     end
@@ -241,7 +240,7 @@ while getgenv().god and task.wait() do
             if game:GetService("Players").LocalPlayer.Character and game:GetService("Players").LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
                 game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position, ball.Position)
                 if game:GetService("Players").LocalPlayer.Character:FindFirstChild("Highlight") then
-                    game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = ball.CFrame * CFrame.new(10, -10, (ball.Velocity).Magnitude * -0.140)
+                    game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame = ball.CFrame * CFrame.new(0, -8, (ball.Velocity).Magnitude * -0.140)
                     game:GetService("ReplicatedStorage").Remotes.ParryButtonPress:Fire()
                 end
             end
@@ -261,6 +260,21 @@ local abilitiesFolder = character:WaitForChild("Abilities")
         ChosenAbility = "Dash"
         end
     })
+
+    Skill:CreateButton({
+        Name = "Freeze",
+        Callback = function()
+        ChosenAbility = "Freeze"
+        end
+    })
+
+    Skill:CreateButton({
+        Name = "Swap",
+        Callback = function()
+        ChosenAbility = "Swap"
+        end
+    })
+
 
     Skill:CreateButton({
         Name = "Rapture",
@@ -350,6 +364,12 @@ local abilitiesFolder = character:WaitForChild("Abilities")
         end
     })
 
+Skill:CreateButton({
+        Name = "Reaper",
+        Callback = function()
+        ChosenAbility = "Reaper"
+        end
+    })
 
 local function onCharacterAdded(newCharacter)
     character = newCharacter
